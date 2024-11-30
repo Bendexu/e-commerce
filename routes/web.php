@@ -56,25 +56,35 @@ Route::get('/productos/{id}', [ProductosController::class, 'show'])->name('produ
 Route::post('/productos/destroy', [ProductosController::class, 'destroy'])->name('productos.destroy');
 
 /*CARRITO*/
-
+Route::middleware('auth')->group(function () {
     // Ruta para ver el carrito
     Route::get('/carrito', [CarritoProductosController::class, 'index'])->name('carrito.ver');
-    
+
     // Ruta para agregar productos al carrito
     Route::post('/agregar-al-carrito', [CarritoProductosController::class, 'store'])->name('carrito.agregar');
-    
+
     // Ruta para actualizar la cantidad de un producto en el carrito
     Route::post('/actualizar-carrito/{id}', [CarritoProductosController::class, 'update'])->name('carrito.actualizar');
-    
+
     // Ruta para eliminar un producto del carrito
     Route::post('/eliminar-carrito/{id}', [CarritoProductosController::class, 'destroy'])->name('carrito.eliminar');
-    
+
     // Ruta para vaciar el carrito
     Route::post('/vaciar-carrito', [CarritoProductosController::class, 'vaciarCarrito'])->name('carrito.vaciar');
-    
+
+    // Flujo de compra en 3 pasos:
+    // Paso 1: Continuar desde el carrito a la entrega
+    Route::get('/continuar-compra', [CarritoProductosController::class, 'mostrarPasoCarrito'])->name('continuar.compra');
+
+    // Paso 2: Mostrar opciones de entrega
+    Route::post('/continuar-entrega', [CarritoProductosController::class, 'mostrarPasoEntrega'])->name('continuar.entrega');
+
+    // Paso 3: Confirmar datos de entrega y continuar al pago
+    Route::post('/continuar-pago', [CarritoProductosController::class, 'mostrarPasoPago'])->name('continuar.pago');
+
     // Ruta para procesar la compra
     Route::post('/procesar-compra', [CarritoProductosController::class, 'procesarCompra'])->name('carrito.procesar');
-
+});
 
 
 /* Inventario */
